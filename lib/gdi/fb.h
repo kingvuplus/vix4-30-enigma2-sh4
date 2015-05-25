@@ -61,6 +61,11 @@ public:
 	int PutCMAP();
 #endif
 	static fbClass *getInstance();
+#if defined(__sh__)
+	void clearFBblit();
+	int getFBdiff(int ret);
+	void setFBdiff(int top, int right, int left, int bottom);
+#endif
 
 	int lock();
 	void unlock();
