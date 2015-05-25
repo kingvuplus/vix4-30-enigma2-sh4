@@ -73,7 +73,7 @@ gAccel::gAccel():
 #ifdef STMFB_ACCEL
 	stmfb_accel_init();
 #endif
-#ifdef ATI_ACCEL
+#ifdef ATI_ACCEL	
 	ati_accel_init();
 #endif
 #ifdef BCM_ACCEL
@@ -170,6 +170,13 @@ bool gAccel::hasAlphaBlendingSupport()
 int gAccel::blit(gUnmanagedSurface *dst, gUnmanagedSurface *src, const eRect &p, const eRect &area, int flags)
 {
 #ifdef STMFB_ACCEL
+	//eDebug( "src: %4d %4d %4d %4d\tdst: %4d %4d %4d %4d\n"
+	//		"area: %4d %4d %4d %4d\tp: %4d %4d %4d %4d\n",
+	//		src->data_phys, src->x, src->y, src->stride,
+	//		dst->data_phys, dst->x, dst->y, dst->stride, 
+	//		area.left(), area.top(), area.width(), area.height(),
+	//		p.x(), p.y(), p.width(), p.height());
+
 	int src_format = 0;
 	gUnmanagedSurface *surfaceTmp = new gUnmanagedSurface(area.width(), area.height(), dst->bpp);
 

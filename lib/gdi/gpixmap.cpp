@@ -416,9 +416,7 @@ void gPixmap::blit(const gPixmap &src, const eRect &_pos, const gRegion &clip, i
 
 //		eDebug("srcarea after scale: %d %d %d %d",
 //			srcarea.x(), srcarea.y(), srcarea.width(), srcarea.height());
-#ifdef FORCE_NO_ACCELNEVER
-		accel = false;
-#else
+
 		if (accel)
 		{
 			/* we have hardware acceleration for this blit operation */
@@ -430,16 +428,12 @@ void gPixmap::blit(const gPixmap &src, const eRect &_pos, const gRegion &clip, i
 					/* Hardware alpha blending is broken on the few
 					 * boxes that support it, so only use it
 					 * when scaling */
-#ifdef FORCE_BLENDING_ACCELERATION
-					accel = true;
-#else
 					if (flag & blitScale)
 						accel = true;
 					else if (flag & blitAlphaTest) /* Alpha test only on 8-bit */
 						accel = (src.surface->bpp == 8);
 					else
 						accel = false;
-#endif
 				}
 				else
 				{
@@ -448,7 +442,7 @@ void gPixmap::blit(const gPixmap &src, const eRect &_pos, const gRegion &clip, i
 				}
 			}
 		}
-#endif
+
 #ifdef GPIXMAP_DEBUG
 		Stopwatch s;
 #endif
