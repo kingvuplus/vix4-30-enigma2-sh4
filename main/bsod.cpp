@@ -18,7 +18,7 @@
 
 /************************************************/
 
-#define CRASH_EMAILADDR "vixlogs@oe-alliance.com"
+#define CRASH_EMAILADDR "vix4logs@vix4.com"
 #define INFOFILE "/maintainer.info"
 
 #define RINGBUFFER_SIZE 16384
