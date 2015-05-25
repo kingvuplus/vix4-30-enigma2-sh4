@@ -9,6 +9,7 @@ from Components.Console import Console
 from Components.Language import language
 from enigma import getDesktop
 from os import access, R_OK
+from boxbranding import getBoxType, getBrandOEM
 
 def InitOsd():
 	SystemInfo["CanChange3DOsd"] = (access('/proc/stb/fb/3dmode', R_OK) or access('/proc/stb/fb/primary/3d', R_OK)) and True or False
@@ -36,6 +37,10 @@ def InitOsd():
 		SystemInfo["OsdMenu"] = True
 	else:
 		SystemInfo["OsdMenu"] = False
+
+	if getBrandOEM() in ('fulan'):
+		SystemInfo["CanChangeOsdPosition"] = False
+		SystemInfo["CanChange3DOsd"] = False
 
 	def setOSDLeft(configElement):
 		if SystemInfo["CanChangeOsdPosition"]:
@@ -93,7 +98,7 @@ def InitOsd():
 class UserInterfacePositioner(Screen, ConfigListScreen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-		self.setup_title = _("Position Setup")
+		self.setup_title = _("Transparency Setup")
 		self.Console = Console()
 		self["status"] = StaticText()
 		self["key_red"] = StaticText(_("Cancel"))
