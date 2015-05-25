@@ -512,8 +512,10 @@ def runScreenTest():
 
 	profile("RunReactor")
 	profile_final()
+	# kill showiframe if it is running (sh4 hack...)
+	os.system("killall -9 showiframe")
 	runReactor()
-
+	
 	profile("wakeup")
 
 	#get currentTime
@@ -612,6 +614,10 @@ Components.UsageConfig.InitUsageConfig()
 profile("Init:DebugLogCheck")
 import Screens.LogManager
 Screens.LogManager.AutoLogManager()
+
+profile("Init:OnlineCheckState")
+import Components.OnlineUpdateCheck
+Components.OnlineUpdateCheck.OnlineUpdateCheck()
 
 profile("Init:NTPSync")
 import Components.NetworkTime
