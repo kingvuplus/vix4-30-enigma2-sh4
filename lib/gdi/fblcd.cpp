@@ -9,6 +9,10 @@
 
 #include <lib/gdi/fblcd.h>
 
+#ifndef FBIO_WAITFORVSYNC
+#define FBIO_WAITFORVSYNC _IOW('F', 0x20, uint32_t)
+#endif
+
 #ifndef FBIO_BLIT
 #define FBIO_SET_MANUAL_BLIT _IOW('F', 0x21, __u8)
 #define FBIO_BLIT 0x22
@@ -34,30 +38,30 @@ eFbLCD::eFbLCD(const char *fb)
 	lcdfd = open(fb, O_RDWR);
 	if (lcdfd < 0)
 	{
-		eDebug("[FbLCD] %s %m", fb);
+		perror(fb);
 		goto nolfb;
 	}
 
 	if (ioctl(lcdfd, FBIOGET_VSCREENINFO, &m_screeninfo) < 0)
 	{
-		eDebug("[FbLCD] FBIOGET_VSCREENINFO %m");
+		perror("FBIOGET_VSCREENINFO");
 		goto nolfb;
 	}
 
 	fb_fix_screeninfo fix;
 	if (ioctl(lcdfd, FBIOGET_FSCREENINFO, &fix) < 0)
 	{
-		eDebug("[FbLCD] FBIOGET_FSCREENINFO %m");
+		perror("FBIOGET_FSCREENINFO");
 		goto nolfb;
 	}
 
 	m_available = fix.smem_len;
 	m_phys_mem = fix.smem_start;
-	eDebug("[FbLCD] %dk video mem", m_available / 1024);
+	eDebug("%dk video mem", m_available / 1024);
 	_buffer=(unsigned char*)mmap(0, m_available, PROT_WRITE|PROT_READ, MAP_SHARED, lcdfd, 0);
 	if (!_buffer)
 	{
-		eDebug("[FbLCD] mmap %m");
+		perror("mmap");
 		goto nolfb;
 	}
 
@@ -74,7 +78,7 @@ nolfb:
 		::close(lcdfd);
 		lcdfd = -1;
 	}
-	eDebug("[FbLCD] framebuffer not available");
+	printf("framebuffer not available.\n");
 	return;
 }
 
@@ -134,19 +138,20 @@ int eFbLCD::setMode(int nxRes, int nyRes, int nbpp)
 
 		if (ioctl(lcdfd, FBIOPUT_VSCREENINFO, &m_screeninfo) < 0)
 		{
-			eDebug("[FbLCD] FBIOPUT_VSCREENINFO %m");
+			perror("FBIOPUT_VSCREENINFO");
+			printf("fb failed\n");
 			return -1;
 		}
-		eDebug("[FbLCD] double buffering not available.");
+		eDebug(" - double buffering not available.");
 	}
 	else
-		eDebug("[FbLCD] double buffering available!");
+		eDebug(" - double buffering available!");
 
 	ioctl(lcdfd, FBIOGET_VSCREENINFO, &m_screeninfo);
 
 	if ((m_screeninfo.xres != nxRes) && (m_screeninfo.yres != nyRes) && (m_screeninfo.bits_per_pixel != nbpp))
 	{
-		eDebug("[FbLCD] SetMode failed: wanted: %dx%dx%d, got %dx%dx%d",
+		eDebug("SetMode failed: wanted: %dx%dx%d, got %dx%dx%d",
 			nxRes, nyRes, nbpp,
 			m_screeninfo.xres, m_screeninfo.yres, m_screeninfo.bits_per_pixel);
 	}
@@ -156,7 +161,8 @@ int eFbLCD::setMode(int nxRes, int nyRes, int nbpp)
 	fb_fix_screeninfo fix;
 	if (ioctl(lcdfd, FBIOGET_FSCREENINFO, &fix) < 0)
 	{
-		eDebug("[FbLCD] FBIOGET_FSCREENINFO %m");
+		perror("FBIOGET_FSCREENINFO");
+		printf("fb failed\n");
 	}
 	_stride = fix.line_length;
 	memset(_buffer, 0, _stride * m_yRes);
@@ -182,7 +188,7 @@ void eFbLCD::update() // blit
 	if (m_manual_blit == 1)
 	{
 		if (ioctl(lcdfd, FBIO_BLIT) < 0)
-			eDebug("[FbLCD] FBIO_BLIT %m");
+			perror("FBIO_BLIT");
 	}
 }
 
@@ -255,7 +261,7 @@ void eFbLCD::enableManualBlit()
 {
 	unsigned char tmp = 1;
 	if (ioctl(lcdfd, FBIO_SET_MANUAL_BLIT, &tmp) < 0)
-		eDebug("[FbLCD] LCD FBIO_SET_MANUAL_BLIT %m");
+		perror("LCD FBIO_SET_MANUAL_BLIT");
 	else
 		m_manual_blit = 1;
 }
@@ -264,19 +270,19 @@ void eFbLCD::disableManualBlit()
 {
 	unsigned char tmp = 0;
 	if (ioctl(lcdfd, FBIO_SET_MANUAL_BLIT, &tmp) < 0)
-		eDebug("[FbLCD] LCD FBIO_SET_MANUAL_BLIT %m");
+		perror("LCD FBIO_SET_MANUAL_BLIT");
 	else
 		m_manual_blit = 0;
 }
 
 int eFbLCD::setLCDBrightness(int brightness)
 {
-	eDebug("[FbLCD] setLCDBrightness %d", brightness);
+	eDebug("setLCDBrightness %d", brightness);
 	FILE *f = fopen("/proc/stb/lcd/oled_brightness", "w");
 	if (f)
 	{
 		if (fprintf(f, "%d", brightness) == 0)
-			eDebug("[FbLCD] write /proc/stb/lcd/oled_brightness failed!! (%m)");
+			eDebug("write /proc/stb/lcd/oled_brightness failed!! (%m)");
 		fclose(f);
 	}
 	return 0;
