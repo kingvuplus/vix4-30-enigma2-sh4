@@ -5,7 +5,6 @@ from Components.Console import Console
 from Components.Label import Label
 from Components.Sources.List import List
 from Components.Pixmap import Pixmap
-from Components.OnlineUpdateCheck import feedsstatuscheck
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Tools.Directories import fileExists
@@ -47,18 +46,7 @@ class CronTimers(Screen):
 		self.onLayoutFinish.append(self.InstallCheck)
 
 	def InstallCheck(self):
-		self.Console.ePopen('/usr/bin/opkg list_installed ' + self.service_name, self.checkNetworkState)
-
-	def checkNetworkState(self, str, retval, extra_args):
-		if 'Collected errors' in str:
-			self.session.openWithCallback(self.close, MessageBox, _("A background update check is in progress, please wait a few minutes and try again."), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
-		elif not str:
-			if feedsstatuscheck.getFeedsBool() not in ('stable', 'unstable'):
-				self.session.openWithCallback(self.InstallPackageFailed, MessageBox, feedsstatuscheck.getFeedsErrorMessage(), type=MessageBox.TYPE_INFO, timeout=10, close_on_any_key=True)
-			else:
-				self.session.openWithCallback(self.InstallPackage, MessageBox, _('Ready to install "%s" ?') % self.service_name, MessageBox.TYPE_YESNO)
-		else:
-			self.updateList()
+		self.Console.ePopen('/usr/bin/opkg list_installed ' + self.service_name)
 
 	def InstallPackage(self, val):
 		if val:
