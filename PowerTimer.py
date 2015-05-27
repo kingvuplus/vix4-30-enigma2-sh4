@@ -7,7 +7,6 @@ from bisect import insort
 from enigma import eActionMap, quitMainloop
 
 from Components.config import config
-from Components.Harddisk import internalHDDNotSleeping
 from Components.TimerSanityCheck import TimerSanityCheck
 from Screens.MessageBox import MessageBox
 import Screens.Standby
