@@ -25,11 +25,6 @@ from Screens.SimpleSummary import SimpleSummary
 from sys import stdout, exc_info
 
 profile("Bouquets")
-from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, NoSave
-config.misc.load_unlinked_userbouquets = ConfigYesNo(default=False)
-def setLoadUnlinkedUserbouquets(configElement):
-	enigma.eDVBDB.getInstance().setLoadUnlinkedUserbouquets(configElement.value)
-config.misc.load_unlinked_userbouquets.addNotifier(setLoadUnlinkedUserbouquets)
 enigma.eDVBDB.getInstance().reloadBouquets()
 
 profile("ParentalControl")
@@ -247,6 +242,16 @@ class Session:
 			self.current_dialog.removeSummary(self.summary)
 			self.popSummary()
 
+	def create(self, screen, arguments, **kwargs):
+		# creates an instance of 'screen' (which is a class)
+		try:
+			return screen(self, *arguments, **kwargs)
+		except:
+			errstr = "Screen %s(%s, %s): %s" % (str(screen), str(arguments), str(kwargs), exc_info()[0])
+			print errstr
+			print_exc(file=stdout)
+			enigma.quitMainloop(5)
+
 	def instantiateDialog(self, screen, *arguments, **kwargs):
 		return self.doInstantiateDialog(screen, arguments, kwargs, self.desktop)
 
@@ -270,14 +275,28 @@ class Session:
 
 	def doInstantiateDialog(self, screen, arguments, kwargs, desktop):
 		# create dialog
-		dlg = screen(self, *arguments, **kwargs)
+
+		try:
+			dlg = self.create(screen, arguments, **kwargs)
+		except:
+			print 'EXCEPTION IN DIALOG INIT CODE, ABORTING:'
+			print '-'*60
+			print_exc(file=stdout)
+			enigma.quitMainloop(5)
+			print '-'*60
+
 		if dlg is None:
 			return
+
 		# read skin data
 		readSkin(dlg, None, dlg.skinName, desktop)
+
 		# create GUI view of this dialog
+		assert desktop is not None
+
 		dlg.setDesktop(desktop)
 		dlg.applySkin()
+
 		return dlg
 
 	def pushCurrent(self):
@@ -460,7 +479,6 @@ from Tools.StbHardware import setFPWakeuptime, setRTCtime
 
 def runScreenTest():
 	config.misc.startCounter.value += 1
-	config.misc.startCounter.save()
 
 	profile("readPluginList")
 	plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
@@ -515,7 +533,9 @@ def runScreenTest():
 	# kill showiframe if it is running (sh4 hack...)
 	os.system("killall -9 showiframe")
 	runReactor()
-	
+
+	config.misc.startCounter.save()
+
 	profile("wakeup")
 
 	#get currentTime
@@ -594,10 +614,6 @@ profile("SetupDevices")
 import Components.SetupDevices
 Components.SetupDevices.InitSetupDevices()
 
-profile("UserInterface")
-import Screens.UserInterfacePositioner
-Screens.UserInterfacePositioner.InitOsd()
-
 profile("AVSwitch")
 import Components.AVSwitch
 Components.AVSwitch.InitAVSwitch()
@@ -615,6 +631,10 @@ profile("Init:DebugLogCheck")
 import Screens.LogManager
 Screens.LogManager.AutoLogManager()
 
+profile("Init:OnlineCheckState")
+import Components.OnlineUpdateCheck
+Components.OnlineUpdateCheck.OnlineUpdateCheck()
+
 profile("Init:NTPSync")
 import Components.NetworkTime
 Components.NetworkTime.AutoNTPSync()
@@ -631,6 +651,10 @@ profile("LCD")
 import Components.Lcd
 Components.Lcd.InitLcd()
 Components.Lcd.IconCheck()
+
+profile("UserInterface")
+import Screens.UserInterfacePositioner
+Screens.UserInterfacePositioner.InitOsd()
 
 profile("EpgCacheSched")
 import Components.EpgLoadSave
