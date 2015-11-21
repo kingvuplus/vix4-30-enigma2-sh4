@@ -5,7 +5,7 @@ from Components.AVSwitch import AVSwitch
 from Components.SystemInfo import SystemInfo
 from GlobalActions import globalActionMap
 from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference
-from boxbranding import getMachineBrand, getMachineName
+from boxbranding import getMachineBrand, getMachineName, getBoxType, getBrandOEM
 from Tools import Notifications
 from time import localtime, time
 import Screens.InfoBar
@@ -15,7 +15,9 @@ inStandby = None
 
 class Standby2(Screen):
 	def Power(self):
-		print "leave standby"
+		print "[Standby] leave standby"
+		if (getBrandOEM() in ('fulan')):
+			open("/proc/stb/hdmi/output", "w").write("on")
 		#set input to encoder
 		self.avswitch.setInput("ENCODER")
 		#restart last played service
@@ -82,11 +84,18 @@ class Standby2(Screen):
 		if self.session.pipshown:
 			self.infoBarInstance and hasattr(self.infoBarInstance, "showPiP") and self.infoBarInstance.showPiP()
 
-		#set input to vcr scart
+#set input to vcr scart
 		if SystemInfo["ScartSwitch"]:
 			self.avswitch.setInput("SCART")
 		else:
 			self.avswitch.setInput("AUX")
+		if (getBrandOEM() in ('fulan')):
+			open("/proc/stb/hdmi/output", "w").write("off")
+
+		if int(config.usage.hdd_standby_in_standby.value) != -1: # HDD standby timer value (box in standby) / -1 = same as when box is active
+			for hdd in harddiskmanager.HDDList():
+				hdd[1].setIdleTime(int(config.usage.hdd_standby_in_standby.value))
+
 		self.onFirstExecBegin.append(self.__onFirstExecBegin)
 		self.onClose.append(self.__onClose)
 
