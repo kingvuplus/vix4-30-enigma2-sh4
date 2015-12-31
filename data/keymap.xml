@@ -85,6 +85,7 @@
 		<key id="KEY_INFO" mapto="showEventInfoPlugin" flags="l"/>
 		<key id="KEY_EPG" mapto="EPGPressed" flags="b"/>
 		<key id="KEY_EPG" mapto="showEventGuidePlugin" flags="l"/>
+		<key id="KEY_SUBTITLE" mapto="EPGPressed" flags="b"/>
 	</map>
 
 	<map context="InfobarInstantRecord">
@@ -103,6 +104,7 @@
 		<key id="KEY_YELLOW" mapto="openIMDB" flags="l"/>
 		<key id="KEY_BLUE" mapto="showPluginBrowser" flags="l"/>
 		<key id="KEY_BLUE" mapto="extensions" flags="b"/>
+		<key id="KEY_WWW" mapto="showPluginBrowser" flags="b"/>
 		<key id="KEY_BOOKMARKS" mapto="showPluginBrowser" flags="mr"/>
 		<key id="KEY_PROGRAM" mapto="openTimerList" flags="b"/>
 		<key id="KEY_PROGRAM" mapto="openAutoTimerList" flags="l"/>
@@ -223,9 +225,9 @@
 	<map context="InfobarActions">
 		<key id="KEY_VIDEO" mapto="showMovies" flags="b"/>
 		<key id="KEY_RADIO" mapto="showRadio" flags="b"/>
-		<key id="KEY_RADIO" mapto="openBouquetList" flags="l"/>
+		<key id="KEY_RADIO" mapto="showTv" flags="l"/>
 		<key id="KEY_TV" mapto="showTv" flags="b"/>
-		<key id="KEY_TV" mapto="openBouquetList" flags="l"/>
+		<key id="KEY_TV" mapto="showRadio" flags="l"/>
 		<key id="KEY_PROG1" mapto="openBouquetList" flags="m"/>
 		<key id="KEY_PROG2" mapto="openBouquetList" flags="m"/>
 		<key id="KEY_FILE" mapto="showMovies" flags="b"/>
@@ -414,6 +416,7 @@
 		<key id="KEY_PLAYPAUSE" mapto="playpauseService" flags="m"/>
 		<key id="KEY_PAUSE" mapto="pauseService" flags="m"/>
 		<key id="KEY_PLAY" mapto="playpauseService" flags="m"/>
+		<key id="KEY_SLEEP" mapto="playpauseService" flags="m"/>
 
 		<key id="KEY_REWIND" mapto="seekBack" flags="b"/>
 		<key id="KEY_FASTFORWARD" mapto="seekFwd" flags="b"/>
@@ -474,6 +477,7 @@
 
 		<key id="KEY_PLAYPAUSE" mapto="timeshiftStart" flags="m"/>
 		<key id="KEY_PAUSE" mapto="timeshiftStart" flags="m"/>
+		<key id="KEY_SLEEP" mapto="timeshiftStart" flags="m"/>
 		<key id="KEY_STOP" mapto="timeshiftStop" flags="m"/>
 		<key id="KEY_TIME" mapto="timeshiftStart" flags="m"/>
 		<key id="KEY_RECORD" mapto="instantRecord" flags="m"/>
