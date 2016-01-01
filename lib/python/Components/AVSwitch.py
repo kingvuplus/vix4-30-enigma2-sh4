@@ -411,7 +411,7 @@ def InitAVSwitch():
 			# TRANSLATORS: (aspect ratio policy: always try to display as fullscreen, when there is no content (black bars) on left/right, even if this breaks the aspect.
 			policy2_choices.update({"auto": _("Auto")})
 		f.close()	
-	config.av.policy_169 = ConfigSelection(choices=policy2_choices, default = "bestfit")
+	config.av.policy_169 = ConfigSelection(choices=policy2_choices, default = "scale")
 	policy_choices = {
 	# TRANSLATORS: (aspect ratio policy: black bars on left/right) in doubt, keep english term.
 	"panscan": _("Pillarbox"),
