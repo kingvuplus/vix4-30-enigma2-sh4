@@ -22,11 +22,11 @@ self.selectKey("DOWN")
 			</code>
 		</step>
 		<step id="network" >
-			<text value="Please connect your receiver to the internet" />
-			<displaytext value="Please connect your receiver to the internet" />
+			<text value="Please connect your receiver to the Internet" />
+			<displaytext value="Please connect your receiver to the Internet" />
 			<list>
-				<listentry caption="Check the internet connection" step="update" />
-				<listentry caption="Skip internet connection check (disables automatic package installation)" step="nima" />
+				<listentry caption="Check the Internet connection" step="update" />
+				<listentry caption="Skip Internet connection check" step="nima" />
 			</list>
 			<code>
 self.clearSelectedKeys()
@@ -35,8 +35,8 @@ self.selectKey("DOWN")
 			</code>
 		</step>
 		<step id="update">
-			<text value="Checking the internet connection" />
-			<displaytext value="Checking the internet connection" />
+			<text value="Checking the Internet connection" />
+			<displaytext value="Checking the Internet connection" />
 			<config screen="InstallWizard" module="InstallWizard" args="0" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
@@ -47,11 +47,11 @@ self.selectKey("OK")
 			<condition>
 self.condition = not config.misc.installwizard.ipkgloaded.value
 			</condition>
-			<text value="Your receiver does not have an internet connection" />
-			<displaytext value="Your receiver is not connected to the internet" />
+			<text value="Your receiver does not have an Internet connection" />
+			<displaytext value="Your receiver is not connected to the Internet" />
 			<list>
-				<listentry caption="Check the internet connection again" step="update" />
-				<listentry caption="Skip internet connection check (disables automatic package installation)" step="nima" />
+				<listentry caption="Check the Internet connection again" step="update" />
+				<listentry caption="Skip Internet connection check" step="nima" />
 			</list>
 			<code>
 self.clearSelectedKeys()
