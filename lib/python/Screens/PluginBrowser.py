@@ -325,18 +325,11 @@ class PluginDownloadBrowser(Screen):
 		self.listHeight = listsize.height()
 
 		if self.type == self.DOWNLOAD:
-			currentTimeoutDefault = socket.getdefaulttimeout()
-			socket.setdefaulttimeout(3)
-			config.softwareupdate.updateisunstable.setValue(urlopen("http://www.vix4.com/feeds/status").read())
-			if ('404 Not Found') in config.softwareupdate.updateisunstable.value:
-				config.softwareupdate.updateisunstable.setValue('1')
-			socket.setdefaulttimeout(currentTimeoutDefault)
-
-			if config.softwareupdate.updateisunstable.value == '1' and config.softwareupdate.updatebeta.value:
+			if (config.softwareupdate.updateisunstable.value == '1'):
 				self["text"].setText(_("WARNING: feeds may be unstable.") + '\n' + _("Downloading plugin information. Please wait..."))
 				self.container.execute(self.ipkg + " update")
-			elif config.softwareupdate.updateisunstable.value == '1' and not config.softwareupdate.updatebeta.value:
-				self["text"].setText(_("Sorry feeds seem be in an unstable state, please try again later."))
+			elif config.softwareupdate.updateisunstable.value == '1':
+				self["text"].setText(_("Sorry feeds seem be in an unstable state, if you wish to use them please enable 'Allow unstable (experimental) updates' in \"Software update settings\"."))
 			else:
 				self.container.execute(self.ipkg + " update")
 		elif self.type == self.REMOVE:
