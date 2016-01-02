@@ -1,7 +1,7 @@
 <!--suppress XmlUnboundNsPrefix -->
 <wizard>
 	   <step id="start" nextstep="end">
-				<text value="Please setup your user interface visibility/transparency setting by adjusting the value below until the menu visibility/transparency is at your desired level. The default setting 255 is the maximum menu visibility level (minimum menu transparency).\nWhen you are ready press OK to continue." />
+				<text value="Please setup your user interface visibility/transparency setting by adjusting the value below until the menu visibility/transparency is at your desired level.\n \nThe default setting 255 is the maximum menu visibility level (minimum menu transparency).\n \nWhen you are ready press OK to continue." />
 				<displaytext value="Adjust transparency value" />
 				<config screen="UserInterfacePositioner" module="UserInterfacePositioner" type="ConfigList" />
 				<code>
