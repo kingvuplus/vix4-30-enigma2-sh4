@@ -326,10 +326,10 @@ class PluginDownloadBrowser(Screen):
 
 		if self.type == self.DOWNLOAD:
 			if (config.softwareupdate.updateisunstable.value == '1'):
-				self["text"].setText(_("WARNING: feeds may be unstable.") + '\n' + _("Downloading plugin information. Please wait..."))
+				self["text"].setText(_("WARNING: addons server may currently be unstable.") + '\n' + _("Downloading plugin information. Please wait..."))
 				self.container.execute(self.ipkg + " update")
 			elif config.softwareupdate.updateisunstable.value == '1':
-				self["text"].setText(_("Sorry feeds seem be in an unstable state, if you wish to use them please enable 'Allow unstable (experimental) updates' in \"Software update settings\"."))
+				self["text"].setText(_("Sorry the addons server is currently unavailable. Please try again later."))
 			else:
 				self.container.execute(self.ipkg + " update")
 		elif self.type == self.REMOVE:
