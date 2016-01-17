@@ -78,9 +78,9 @@ void eListboxServiceContent::setRoot(const eServiceReference &root, bool justSet
 	ASSERT(m_service_center);
 
 	if (m_service_center->list(m_root, m_lst))
-		eDebug("[eListboxServiceContent] no list available!");
+		eDebug("eListboxServiceContent: no list available!");
 	else if (m_lst->getContent(m_list))
-		eDebug("[eListboxServiceContent] getContent failed");
+		eDebug("eListboxServiceContent: getContent failed");
 
 	FillFinished();
 }
@@ -109,37 +109,6 @@ void eListboxServiceContent::getCurrent(eServiceReference &ref)
 {
 	if (cursorValid())
 		ref = *m_cursor;
-	else
-		ref = eServiceReference();
-}
-
-void eListboxServiceContent::getPrev(eServiceReference &ref)
-{
-	if (cursorValid())
-	{
-		list::iterator cursor(m_cursor);
-		if (cursor == m_list.begin())
-		{
-			cursor = m_list.end();
-		}
-		ref = *(--cursor);
-	}
-	else
-		ref = eServiceReference();
-}
-
-void eListboxServiceContent::getNext(eServiceReference &ref)
-{
-	if (cursorValid())
-	{
-		list::iterator cursor(m_cursor);
-		cursor++;
-		if (cursor == m_list.end())
-		{
-			cursor = m_list.begin();
-		}
- 		ref = *(cursor);
-	}
 	else
 		ref = eServiceReference();
 }
@@ -406,17 +375,17 @@ int eListboxServiceContent::setCurrentMarked(bool state)
 			{
 				ePtr<iMutableServiceList> list;
 				if (m_lst->startEdit(list))
-					eDebug("[eListboxServiceContent] no editable list");
+					eDebug("eListboxServiceContent: no editable list");
 				else
 				{
 					eServiceReference ref;
 					getCurrent(ref);
 					if(!ref)
-						eDebug("[eListboxServiceContent] no valid service selected");
+						eDebug("eListboxServiceContent: no valid service selected");
 					else
 					{
 						int pos = cursorGet();
-						eDebugNoNewLineStart("[eListboxServiceContent] move %s to %d ", ref.toString().c_str(), pos);
+						eDebugNoNewLineStart("eListboxServiceContent: move %s to %d ", ref.toString().c_str(), pos);
 						if (list->moveService(ref, cursorGet()))
 							eDebugNoNewLine("failed\n");
 						else
@@ -425,7 +394,7 @@ int eListboxServiceContent::setCurrentMarked(bool state)
 				}
 			}
 			else
-				eDebug("[eListboxServiceContent] no list available!");
+				eDebug("eListboxServiceContent: no list available!");
 		}
 	}
 
@@ -594,13 +563,11 @@ bool eListboxServiceContent::checkServiceIsRecorded(eServiceReference ref)
 			ePtr<eDVBResourceManager> res;
 			eDVBResourceManager::getInstance(res);
 			res->getChannelList(db);
-			eBouquet *bouquet = NULL;
-			if (!db->getBouquet(ref, bouquet))
-			{
-				for (std::list<eServiceReference>::iterator i(bouquet->m_services.begin()); i != bouquet->m_services.end(); ++i)
-					if (*i == it->second)
-						return true;
-			}
+			eBouquet *bouquet=0;
+			db->getBouquet(ref, bouquet);
+			for (std::list<eServiceReference>::iterator i(bouquet->m_services.begin()); i != bouquet->m_services.end(); ++i)
+				if (*i == it->second)
+					return true;
 		}
 		else if (ref == it->second)
 			return true;
@@ -1002,17 +969,12 @@ void eListboxServiceContent::paint(gPainter &painter, eWindowStyle &style, const
 				if (pixmap)
 				{
 					eSize pixmap_size = pixmap->size();
-					eRect area;
-					if (e == celFolderPixmap || m_element_position[celServiceNumber].width() < pixmap_size.width())
-					{
-						area = m_element_position[celServiceName];
+					eRect area = m_element_position[e == celFolderPixmap ? celServiceName: celServiceNumber];
+					int correction = (area.height() - pixmap_size.height()) / 2;
+					if (e == celFolderPixmap)
 						if (m_element_position[celServiceEventProgressbar].left() == 0)
 							area.setLeft(0);
-						xoffset = pixmap_size.width() + m_items_distances;			
-					}
-					else
-						area = m_element_position[celServiceNumber];
-					int correction = (area.height() - pixmap_size.height()) / 2;
+						xoffset = pixmap_size.width() + m_items_distances;
 					area.moveBy(offset);
 					painter.clip(area);
 					painter.blit(pixmap, ePoint(area.left(), offset.y() + correction), area, gPainter::BT_ALPHABLEND);

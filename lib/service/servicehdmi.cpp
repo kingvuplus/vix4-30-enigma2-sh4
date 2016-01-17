@@ -215,7 +215,7 @@ RESULT eServiceHDMIRecord::start(bool simulate)
 RESULT eServiceHDMIRecord::stop()
 {
 	if (!m_simulate)
-		eDebug("[eServiceHDMIRecord] stop recording!");
+		eDebug("stop recording!");
 	if (m_state == stateRecording)
 	{
 		if (m_thread)
@@ -231,7 +231,7 @@ RESULT eServiceHDMIRecord::stop()
 
 		m_state = statePrepared;
 	} else if (!m_simulate)
-		eDebug("[eServiceHDMIRecord] (was not recording)");
+		eDebug("(was not recording)");
 	if (m_state == statePrepared)
 	{
 		m_thread = NULL;
@@ -266,12 +266,12 @@ int eServiceHDMIRecord::doRecord()
 
 	if (!m_thread && !m_simulate)
 	{
-		eDebug("[eServiceHDMIRecord] Recording to %s...", m_filename.c_str());
+		eDebug("Recording to %s...", m_filename.c_str());
 		::remove(m_filename.c_str());
 		int fd = ::open(m_filename.c_str(), O_WRONLY | O_CREAT | O_LARGEFILE | O_CLOEXEC, 0666);
 		if (fd < 0)
 		{
-			eDebug("[eServiceHDMIRecord] can't open recording file: %m");
+			eDebug("eServiceHDMIRecord - can't open recording file!");
 			m_error = errOpenRecordFile;
 			m_event((iRecordableService*)this, evRecordFailed);
 			return errOpenRecordFile;
@@ -283,7 +283,7 @@ int eServiceHDMIRecord::doRecord()
 		m_target_fd = fd;
 	}
 
-	eDebug("[eServiceHDMIRecord] start recording...");
+	eDebug("start recording...");
 
 	if (m_state != stateRecording)
 	{
