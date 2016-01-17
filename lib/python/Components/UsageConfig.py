@@ -40,7 +40,7 @@ def InitUsageConfig():
 
 	choicelist = [("-1", _("Disable"))]
 	for i in range(0,1300,100):
-		choicelist.append((str(i), ngettext("%d pixel wide", "%d pixels wide", i) % i))
+		choicelist.append(("%d" % i, ngettext("%d pixel wide", "%d pixels wide", i) % i))
 	config.usage.servicelist_column = ConfigSelection(default="-1", choices=choicelist)
 	config.usage.servicelist_column.addNotifier(refreshServiceList)
 
@@ -58,17 +58,17 @@ def InitUsageConfig():
 	config.usage.quickzap_bouquet_change = ConfigYesNo(default = False)
 	config.usage.e1like_radio_mode = ConfigYesNo(default = True)
 
-	choicelist = [("0", _("No timeout"))]
-	for i in range(1, 12):
-		choicelist.append((str(i), ngettext("%d second", "%d seconds", i) % i))
-	config.usage.infobar_timeout = ConfigSelection(default = "5", choices = choicelist)
+	choicelist = []
+	for i in range(1, 11):
+		choicelist.append(("%d" % i, ngettext("%d second", "%d seconds", i) % i))
+	config.usage.infobar_timeout = ConfigSelection(default = "5", choices = [("0", _("No timeout"))] + choicelist)
 	config.usage.show_infobar_do_dimming = ConfigYesNo(default = False)
 	config.usage.show_infobar_dimming_speed = ConfigSelectionNumber(min = 1, max = 40, stepwidth = 1, default = 40, wraparound = True)
 	config.usage.show_infobar_on_zap = ConfigYesNo(default = True)
 	config.usage.show_infobar_on_skip = ConfigYesNo(default = True)
 	config.usage.show_infobar_on_event_change = ConfigYesNo(default = False)
 	config.usage.show_infobar_channel_number = ConfigYesNo(default = False)
-	config.usage.show_second_infobar = ConfigSelection(default = "5", choices = [("none", _("None"))] + choicelist + [("EPG",_("EPG")),("INFOBAREPG",_("InfoBar EPG"))])
+	config.usage.show_second_infobar = ConfigSelection(default = "5", choices = [("none", _("None")), ("0", _("No timeout"))] + choicelist + [("EPG",_("EPG")),("INFOBAREPG",_("InfoBar EPG"))])
 	def showsecondinfobarChanged(configElement):
 		if config.usage.show_second_infobar.value != "INFOBAREPG":
 			SystemInfo["InfoBarEpg"] = True
@@ -88,13 +88,13 @@ def InitUsageConfig():
 
 	choicelist = []
 	for i in (10, 30):
-		choicelist.append((str(i), ngettext("%d second", "%d seconds", i) % i))
+		choicelist.append(("%d" % i, ngettext("%d second", "%d seconds", i) % i))
 	for i in (60, 120, 300, 600, 1200, 1800):
 		m = i / 60
-		choicelist.append((str(i), ngettext("%d minute", "%d minutes", m) % m))
+		choicelist.append(("%d" % i, ngettext("%d minute", "%d minutes", m) % m))
 	for i in (3600, 7200, 14400):
 		h = i / 3600
-		choicelist.append((str(i), ngettext("%d hour", "%d hours", h) % h))
+		choicelist.append(("%d" % i, ngettext("%d hour", "%d hours", h) % h))
 	config.usage.hdd_standby = ConfigSelection(default = "300", choices = [("0", _("No standby"))] + choicelist)
 	config.usage.output_12V = ConfigSelection(default = "do not change", choices = [
 		("do not change", _("Do not change")), ("off", _("Off")), ("on", _("On")) ])
@@ -107,7 +107,7 @@ def InitUsageConfig():
 	choicelist = [("-1", _("Disabled")), ("0", _("No timeout"))]
 	for i in [60, 300, 600, 900, 1800, 2700, 3600]:
 		m = i/60
-		choicelist.append((str(i), ngettext("%d minute", "%d minutes", m) % m))
+		choicelist.append(("%d" % i, ngettext("%d minute", "%d minutes", m) % m))
 	config.usage.pip_last_service_timeout = ConfigSelection(default = "0", choices = choicelist)
 
 	if not os.path.exists(resolveFilename(SCOPE_HDD)):
@@ -205,39 +205,17 @@ def InitUsageConfig():
 
 	config.usage.remote_fallback_enabled = ConfigYesNo(default = False);
 	config.usage.remote_fallback = ConfigText(default = "", fixed_size = False);
-	config.usage.remote_fallback_port = ConfigInteger(default = 8001, limits = (1, 65535));
-	config.usage.timer_sanity_check_enabled = ConfigYesNo(default = True);
 
-	dvbs_nims = [("-2", _("Disabled"))]
-	dvbt_nims = [("-2", _("Disabled"))]
-	dvbc_nims = [("-2", _("Disabled"))]
 	nims = [("-1", _("auto"))]
 	rec_nims = [("-2", _("Disabled")), ("-1", _("auto"))]
 	for x in nimmanager.nim_slots:
-		if x.isCompatible("DVB-S"):
-			dvbs_nims.append((str(x.slot), x.getSlotName()))
-		elif x.isCompatible("DVB-T"):
-			dvbt_nims.append((str(x.slot), x.getSlotName()))
-		elif x.isCompatible("DVB-C"):
-			dvbc_nims.append((str(x.slot), x.getSlotName()))
 		nims.append((str(x.slot), x.getSlotName()))
 		rec_nims.append((str(x.slot), x.getSlotName()))
 	config.usage.frontend_priority = ConfigSelection(default = "-1", choices = nims)
 	config.usage.recording_frontend_priority = ConfigSelection(default = "-2", choices = rec_nims)
 	config.misc.disable_background_scan = ConfigYesNo(default = False)
-	config.usage.frontend_priority_dvbs = ConfigSelection(default = "-2", choices = list(dvbs_nims))
-	dvbs_nims.insert(1,("-1", _("auto")))
-	config.usage.jobtaskextensions = ConfigYesNo(default = True)
-	config.usage.recording_frontend_priority_dvbs = ConfigSelection(default = "-2", choices = dvbs_nims)
-	config.usage.frontend_priority_dvbt = ConfigSelection(default = "-2", choices = list(dvbt_nims))
-	dvbt_nims.insert(1,("-1", _("auto")))
-	config.usage.recording_frontend_priority_dvbt = ConfigSelection(default = "-2", choices = dvbt_nims)
-	config.usage.frontend_priority_dvbc = ConfigSelection(default = "-2", choices = list(dvbc_nims))
-	dvbc_nims.insert(1,("-1", _("auto")))
-	config.usage.recording_frontend_priority_dvbc = ConfigSelection(default = "-2", choices = dvbc_nims)
-	SystemInfo["DVB-S_priority_tuner_available"] = len(dvbs_nims) > 3 and (len(dvbt_nims) > 2 or len(dvbc_nims) > 2)
-	SystemInfo["DVB-T_priority_tuner_available"] = len(dvbt_nims) > 3 and (len(dvbs_nims) > 2 or len(dvbc_nims) > 2)
-	SystemInfo["DVB-C_priority_tuner_available"] = len(dvbc_nims) > 3 and (len(dvbs_nims) > 2 or len(dvbt_nims) > 2)
+
+	config.usage.jobtaksextensions = ConfigYesNo(default = True)
 
 	config.usage.servicenum_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
 	config.usage.servicename_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
@@ -421,8 +399,8 @@ def InitUsageConfig():
 	config.softwareupdate = ConfigSubsection()
 	config.softwareupdate.autosettingsbackup = ConfigYesNo(default = True)
 	config.softwareupdate.autoimagebackup = ConfigYesNo(default = False)
-	config.softwareupdate.check = ConfigYesNo(default = True)
-	config.softwareupdate.checktimer = ConfigSelectionNumber(min = 1, max = 48, stepwidth = 1, default = 6, wraparound = True)
+	config.softwareupdate.check = ConfigYesNo(default = False)
+	config.softwareupdate.checktimer = ConfigSelectionNumber(min = 1, max = 48, stepwidth = 1, default = 6, wraparound = False)
 	config.softwareupdate.updatelastcheck = ConfigInteger(default=0)
 	config.softwareupdate.updatefound = NoSave(ConfigBoolean(default = False))
 	config.softwareupdate.updatebeta = ConfigYesNo(default = False)
@@ -535,14 +513,13 @@ def InitUsageConfig():
 	config.subtitles.colourise_dialogs = ConfigYesNo(default = False)
 	config.subtitles.subtitle_borderwidth = ConfigSelection(choices = ["1", "2", "3", "4", "5"], default = "3")
 	config.subtitles.subtitle_fontsize  = ConfigSelection(choices = ["%d" % x for x in range(16,101) if not x % 2], default = "40")
-	config.subtitles.showbackground = ConfigYesNo(default = False)
 
 	subtitle_delay_choicelist = []
 	for i in range(-900000, 1845000, 45000):
 		if i == 0:
 			subtitle_delay_choicelist.append(("0", _("No delay")))
 		else:
-			subtitle_delay_choicelist.append((str(i), "%2.1f sec" % (i / 90000.)))
+			subtitle_delay_choicelist.append(("%d" % i, "%2.1f sec" % (i / 90000.)))
 	config.subtitles.subtitle_noPTSrecordingdelay = ConfigSelection(default = "315000", choices = subtitle_delay_choicelist)
 
 	config.subtitles.dvb_subtitles_yellow = ConfigYesNo(default = False)
@@ -613,8 +590,7 @@ def InitUsageConfig():
 		("swe", _("Swedish")),
 		("tha", _("Thai")),
 		("tur Audio_TUR", _("Turkish")),
-		("ukr Ukr", _("Ukrainian")),
-		("NAR", _("Visual impaired commentary"))]
+		("ukr Ukr", _("Ukrainian"))]
 
 	def setEpgLanguage(configElement):
 		eServiceEvent.setEPGLanguage(configElement.value)
@@ -695,7 +671,7 @@ def InitUsageConfig():
 	config.epgselection.enhanced_ok = ConfigSelection(choices = [("Zap",_("Zap")), ("Zap + Exit", _("Zap + Exit"))], default = "Zap")
 	config.epgselection.enhanced_oklong = ConfigSelection(choices = [("Zap",_("Zap")), ("Zap + Exit", _("Zap + Exit"))], default = "Zap + Exit")
 	config.epgselection.enhanced_eventfs = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 10, wraparound = True)
-	config.epgselection.enhanced_itemsperpage = ConfigSelectionNumber(default = 18, stepwidth = 1, min = 3, max = 40, wraparound = True)
+	config.epgselection.enhanced_itemsperpage = ConfigSelectionNumber(default = 18, stepwidth = 1, min = 12, max = 40, wraparound = True)
 	config.epgselection.multi_showbouquet = ConfigYesNo(default = False)
 	config.epgselection.multi_preview_mode = ConfigYesNo(default = True)
 	config.epgselection.multi_ok = ConfigSelection(choices = [("Zap",_("Zap")), ("Zap + Exit", _("Zap + Exit"))], default = "Zap")
@@ -732,7 +708,7 @@ def InitUsageConfig():
 	softcams = os.listdir('/usr/softcams/')
 	config.oscaminfo = ConfigSubsection()
 	config.oscaminfo.showInExtensions = ConfigYesNo(default=False)
-	config.oscaminfo.userdatafromconf = ConfigYesNo(default = True)
+	config.oscaminfo.userdatafromconf = ConfigYesNo(default = False)
 	config.oscaminfo.autoupdate = ConfigYesNo(default = False)
 	config.oscaminfo.username = ConfigText(default = "username", fixed_size = False, visible_width=12)
 	config.oscaminfo.password = ConfigPassword(default = "password", fixed_size = False)
@@ -769,7 +745,6 @@ def InitUsageConfig():
 	config.streaming = ConfigSubsection()
 	config.streaming.stream_ecm = ConfigYesNo(default = False)
 	config.streaming.descramble = ConfigYesNo(default = True)
-	config.streaming.descramble_client = ConfigYesNo(default = False)
 	config.streaming.stream_eit = ConfigYesNo(default = True)
 	config.streaming.stream_ait = ConfigYesNo(default = True)
 	config.streaming.authentication = ConfigYesNo(default = False)
