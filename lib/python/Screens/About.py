@@ -39,7 +39,7 @@ class About(Screen):
 
 	def populate(self):
 		self["lab1"] = StaticText(_("ViX4E2PROJECT"))
-		self["lab2"] = StaticText(_("By Lavatronics Antony"))
+		self["lab2"] = StaticText(_("By ViX4 Limited"))
 		model = None
 		AboutText = ""
 		self["lab3"] = StaticText(_("www.ViX4.com"))
@@ -51,7 +51,7 @@ class About(Screen):
 
 		AboutText += _("CPU:\t%s\n") % about.getCPUString()
 		AboutText += _("CPU Speed:\t%s\n") % about.getCPUSpeedString()
-		AboutText += _("Cores:\t%s\n") % about.getCpuCoresString()
+		AboutText += _("Cores/Threads:\t%s\n") % about.getCpuCoresString()
 
 		AboutText += _("Version:\t%s\n") % getImageVersion()
 		AboutText += _("Build:\t%s\n") % getImageBuild()
