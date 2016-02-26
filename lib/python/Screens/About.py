@@ -39,7 +39,7 @@ class About(Screen):
 
 	def populate(self):
 		self["lab1"] = StaticText(_("ViX4E2PROJECT"))
-		self["lab2"] = StaticText(_("By ViX4 Limited"))
+		self["lab2"] = StaticText(_("By ViX4 Antony"))
 		model = None
 		AboutText = ""
 		self["lab3"] = StaticText(_("www.ViX4.com"))
